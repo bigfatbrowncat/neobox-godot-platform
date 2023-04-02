@@ -532,7 +532,7 @@ public:
 			case SDL_JOYBUTTONUP:
 			case SDL_JOYDEVICEADDED:
 			case SDL_JOYDEVICEREMOVED:
-				js_event(ev);
+				// js_event(ev); Disabled all Joysticks to allow GPTOKEYB remapping for broken SDL Mappings on RK3326 devices
 				break;
 			case SDL_QUIT:
 				handler_->handle_quit_event();
