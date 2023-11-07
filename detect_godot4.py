@@ -86,20 +86,20 @@ def configure_target(env):
 	pass # use engine default
 
 def configure_misc(env):
-	env.Append(CPPPATH=['#platform/frt'])
-	env.Append(CPPFLAGS=['-DUNIX_ENABLED'])
-	env.Append(CPPDEFINES=[('_FILE_OFFSET_BITS', 64)])
-	if env['vulkan']:
-		env.Append(CPPDEFINES=['VULKAN_ENABLED'])
-	if env['opengl3']:
-		env.Append(CPPDEFINES=['GLES3_ENABLED'])
-	env.Append(CPPFLAGS=['-DFRT_ENABLED'])
-	env.Append(LIBS=['pthread', 'z', 'dl'])
-	if env['CXX'] == 'clang++':
-		env['CC'] = 'clang'
-		env['LD'] = 'clang++'
-	if env['use_static_cpp']:
-		env.Append(LINKFLAGS=['-static-libgcc', '-static-libstdc++'])
+    env.Append(CPPPATH=['#platform/frt'])
+    env.Append(CPPFLAGS=['-DUNIX_ENABLED'])
+    env.Append(CPPDEFINES=[('_FILE_OFFSET_BITS', 64)])
+    if env['vulkan']:
+        env.Append(CPPDEFINES=['VULKAN_ENABLED'])
+    if env['opengl3']:
+        env.Append(CPPDEFINES=['GLES3_ENABLED'])
+    env.Append(CPPFLAGS=['-DFRT_ENABLED'])
+    env.Append(LIBS=['pthread', 'z', 'dl', 'EGL', 'GLESv2'])  # Added 'EGL' and 'GLESv2' here
+    if env['CXX'] == 'clang++':
+        env['CC'] = 'clang'
+        env['LD'] = 'clang++'
+    if env['use_static_cpp']:
+        env.Append(LINKFLAGS=['-static-libgcc', '-static-libstdc++'])
 
 def configure(env):
 	configure_compiler(env)
