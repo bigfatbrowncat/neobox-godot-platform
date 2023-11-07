@@ -3,6 +3,27 @@ FRT
 
 [Godot](https://godotengine.org) is a full 2D and 3D game engine with editor.
 
+## Compile Instructions for FRT 4.0.4 with Joysticks disabled
+```
+wget https://github.com/godotengine/godot/releases/download/4.0.4-stable/godot-4.0.4-stable.tar.xz
+tar xf godot-4.0.4-stable.tar.xz
+cd godot-4.0.4-stable/platform/
+git clone https://github.com/Cebion/frt.git
+cd ../
+nice scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes -j8
+```
+
+## Compile Instructions for FRT 4.1.3 with Joysticks disabled
+```
+wget https://github.com/godotengine/godot/releases/download/4.1.3-stable/godot-4.1.3-stable.tar.xz
+tar xf godot-4.1.3-stable.tar.xz
+cd godot-4.1.3-stable/platform/
+git clone https://github.com/Cebion/frt.git
+cd ../
+nice scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes -j8
+```
+
+
 FRT is a Godot "platform" targeting single board computers. In plain English,
 you can export a Godot game to most of them by using FRT binaries, *as long as
 the game has been designed with the limitation of the hardware in mind*.
