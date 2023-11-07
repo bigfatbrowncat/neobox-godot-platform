@@ -216,6 +216,11 @@ public: // GraphicsContext
 };
 
 class Godot4_DisplayServer : public DisplayServer, public EventHandler {
+bool window_is_focused(WindowID p_window = MAIN_WINDOW_ID) const override {
+    // Since the device uses DRM/KMS and is always fullscreen, the window is always focused when the application is running.
+    return true;
+}
+
 private:
 	OS_FRT os_;
 	GraphicsContext *context_ = nullptr;
