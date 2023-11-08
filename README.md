@@ -10,7 +10,7 @@ tar xf godot-4.0.4-stable.tar.xz
 cd godot-4.0.4-stable/platform/
 git clone https://github.com/Cebion/frt.git
 cd ../
-nice scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes -j8
+scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes -j8
 ```
 
 ## Compile Instructions for FRT 4.1.3 with Joysticks disabled
@@ -20,7 +20,7 @@ tar xf godot-4.1.3-stable.tar.xz
 cd godot-4.1.3-stable/platform/
 git clone https://github.com/Cebion/frt.git
 cd ../
-nice scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes -j8
+scons target=template_release frt_std=c++17 optimize=speed debug_symbols=no platform=frt use_llvm=yes vulkan=false openxr=false use_volk=false arch=arm64 -j10
 ```
 
 
