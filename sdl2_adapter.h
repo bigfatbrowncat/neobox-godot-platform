@@ -462,6 +462,7 @@ public:
 			fatal("SDL_Init failed: %s.", SDL_GetError());
 		is_vulkan_ = api == API_Vulkan;
 		int flags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
+
 		if (is_vulkan_) {
 #ifdef VULKAN_ENABLED
 			flags |= SDL_WINDOW_VULKAN;
@@ -532,7 +533,7 @@ public:
 			case SDL_JOYBUTTONUP:
 			case SDL_JOYDEVICEADDED:
 			case SDL_JOYDEVICEREMOVED:
-				// js_event(ev); Disabled all Joysticks to allow GPTOKEYB remapping for broken SDL Mappings on RK3326 devices
+				js_event(ev);
 				break;
 			case SDL_QUIT:
 				handler_->handle_quit_event();

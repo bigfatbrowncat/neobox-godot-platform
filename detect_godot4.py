@@ -13,7 +13,7 @@ import version
 # TODO factor out common bits
 
 def get_opts():
-	from SCons.Variables import BoolVariable
+	from SCons.Variables import BoolVariable, PathVariable
 	return [
 		BoolVariable('use_llvm', 'Use llvm compiler', False),
 		BoolVariable('use_lto', 'Use link time optimization', False),
@@ -22,7 +22,9 @@ def get_opts():
 		('frt_arch', 'Architecture (no/arm32v6/arm32v7/arm64v8/amd64)', 'no'),
 		('frt_cross', 'Cross compilation (no/auto/<triple>)', 'no'),
 		BoolVariable('frt_custom_renderer', 'Use custom renderer', False),
+		PathVariable('frt_pkg_config', 'the path to pkg-config executable', 'pkg-config'),
 	]
+
 
 def get_flags():
 	return [
@@ -62,25 +64,36 @@ def configure_arch(env):
 		env.extra_suffix += '.' + env['frt_arch']
 
 def configure_cross(env):
-	if env['frt_cross'] == 'no':
+	if 'frt_pkg_config' in env:
+		env['FRT_PKG_CONFIG'] = env['frt_pkg_config']
+	else:
 		env['FRT_PKG_CONFIG'] = 'pkg-config'
-		return
-	if env['frt_cross'] == 'auto':
-		triple = {
-			'arm32v6': 'arm-linux-gnueabihf',
-			'arm32v7': 'arm-linux-gnueabihf',
-			'arm64v8': 'aarch64-linux-gnu',
-			'amd64': 'x86_64-linux-gnu',
-		}[env['frt_arch']]
-	else:
-		triple = env['frt_cross']
-	if env['use_llvm']:
-		env.Append(CCFLAGS=['-target', triple])
-		env.Append(LINKFLAGS=['-target', triple])
-	else:
-		env['CC'] = triple + '-gcc'
-		env['CXX'] = triple + '-g++'
-	env['FRT_PKG_CONFIG'] = triple + '-pkg-config'
+	print(env['FRT_PKG_CONFIG'])
+
+	# We are addning libmali here, non optional (probably not the best solution)
+	env.Append(LINKFLAGS=['-lmali'])
+
+#	if env['frt_cross'] == 'no':
+#		if 'FRT_PKG_CONFIG' not in env:
+#			env['FRT_PKG_CONFIG'] = 'pkg-config'
+#			return
+#	if env['frt_cross'] == 'auto':
+#		triple = {
+#			'arm32v6': 'arm-linux-gnueabihf',
+#			'arm32v7': 'arm-linux-gnueabihf',
+#			'arm64v8': 'aarch64-linux-gnu',
+#			'amd64': 'x86_64-linux-gnu',
+#		}[env['frt_arch']]
+#	else:
+#		triple = env['frt_cross']
+#	if env['use_llvm']:
+#		env.Append(CCFLAGS=['-target', triple])
+#		env.Append(LINKFLAGS=['-target', triple])
+#	else:
+#		env['CC'] = triple + '-gcc'
+#		env['CXX'] = triple + '-g++'
+#	if 'FRT_PKG_CONFIG' not in env:
+#		env['FRT_PKG_CONFIG'] = triple + '-pkg-config'
 
 def configure_target(env):
 	pass # use engine default

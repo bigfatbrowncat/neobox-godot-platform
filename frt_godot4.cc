@@ -16,6 +16,8 @@
 #endif
 #ifdef GLES3_ENABLED
 #include "drivers/gles3/rasterizer_gles3.h"
+typedef void *(*FRT_FN_gles3_GetProcAddress)(const char *name);
+extern void frt_resolve_symbols_gles3(FRT_FN_gles3_GetProcAddress get_proc_address);
 #else
 #include "dl/gles3.gen.h"
 #endif
@@ -192,7 +194,7 @@ public: // GraphicsContext
 	void init_context(int width, int height, VSyncMode mode) override {
 		os_.init_context_gl();
 		frt_resolve_symbols_gles3(get_proc_address);
-		RasterizerGLES3::make_current();
+		RasterizerGLES3::make_current();//true);
 	}
 };
 #endif
