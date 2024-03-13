@@ -1,11 +1,11 @@
-// frt_godot2.cc
+// neobox_godot2.cc
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
-#include "frt.h"
+#include "neobox.h"
 #include "sdl2_adapter.h"
 #include "sdl2_godot_map_2_3.h"
 #include "dl/gles2.gen.h"
@@ -27,7 +27,7 @@
 #include "drivers/gles2/rasterizer_gles2.h"
 #include "main/main.h"
 
-namespace frt {
+namespace neobox {
 
 class AudioDriverSDL2 : public AudioDriverSW, public SampleProducer {
 private:
@@ -38,36 +38,36 @@ public:
 	AudioDriverSDL2() : audio_(this) {
 	}
 public: // AudioDriverSW
-	const char *get_name() const FRT_OVERRIDE {
+	const char *get_name() const NEOBOX_OVERRIDE {
 		return "SDL2";
 	}
-	Error init() FRT_OVERRIDE {
+	Error init() NEOBOX_OVERRIDE {
 		mix_rate_ = GLOBAL_DEF("audio/mix_rate", 44100);
 		output_format_ = OUTPUT_STEREO;
 		const int latency = GLOBAL_DEF("audio/output_latency", 25);
 		const int samples = closest_power_of_2(latency * mix_rate_ / 1000);
 		return audio_.init(mix_rate_, samples) ? OK : ERR_CANT_OPEN;
 	}
-	int get_mix_rate() const FRT_OVERRIDE {
+	int get_mix_rate() const NEOBOX_OVERRIDE {
 		return mix_rate_;
 	}
-	OutputFormat get_output_format() const FRT_OVERRIDE {
+	OutputFormat get_output_format() const NEOBOX_OVERRIDE {
 		return output_format_;
 	}
-	void start() FRT_OVERRIDE {
+	void start() NEOBOX_OVERRIDE {
 		audio_.start();
 	}
-	void lock() FRT_OVERRIDE {
+	void lock() NEOBOX_OVERRIDE {
 		audio_.lock();
 	}
-	void unlock() FRT_OVERRIDE {
+	void unlock() NEOBOX_OVERRIDE {
 		audio_.unlock();
 	}
-	void finish() FRT_OVERRIDE {
+	void finish() NEOBOX_OVERRIDE {
 		audio_.finish();
 	}
 public: // SampleProducer
-	void produce_samples(int n_of_frames, int32_t *frames) FRT_OVERRIDE {
+	void produce_samples(int n_of_frames, int32_t *frames) NEOBOX_OVERRIDE {
 		audio_server_process(n_of_frames, frames);
 	}
 };
@@ -77,7 +77,7 @@ private:
 	MainLoop *main_loop_;
 	VideoMode video_mode_;
 	bool quit_;
-	OS_FRT os_;
+	OS_NEOBOX os_;
 	RasterizerGLES2 *rasterizer_;
 	VisualServer *visual_server_;
 	int event_id_;
@@ -166,35 +166,35 @@ public:
 		}
 	}
 public: // OS
-	int get_video_driver_count() const FRT_OVERRIDE {
+	int get_video_driver_count() const NEOBOX_OVERRIDE {
 		return 1;
 	}
-	const char *get_video_driver_name(int driver) const FRT_OVERRIDE {
+	const char *get_video_driver_name(int driver) const NEOBOX_OVERRIDE {
 		return "GLES2";
 	}
-	VideoMode get_default_video_mode() const FRT_OVERRIDE {
+	VideoMode get_default_video_mode() const NEOBOX_OVERRIDE {
 		return OS::VideoMode(960, 540, false);
 	}
-	void initialize(const VideoMode &desired, int video_driver, int audio_driver) FRT_OVERRIDE {
+	void initialize(const VideoMode &desired, int video_driver, int audio_driver) NEOBOX_OVERRIDE {
 		video_mode_ = desired;
 		os_.init_gl(API_OpenGL_ES2, video_mode_.width, video_mode_.height, video_mode_.resizable, video_mode_.borderless_window, video_mode_.always_on_top);
-		frt_resolve_symbols_gles2(get_proc_address);
+		neobox_resolve_symbols_gles2(get_proc_address);
 		init_video();
 		init_audio();
 		init_physics();
 		init_input();
 		_ensure_data_dir();
 	}
-	void set_main_loop(MainLoop *main_loop) FRT_OVERRIDE {
+	void set_main_loop(MainLoop *main_loop) NEOBOX_OVERRIDE {
 		main_loop_ = main_loop;
 		input_->set_main_loop(main_loop);
 	}
-	void delete_main_loop() FRT_OVERRIDE {
+	void delete_main_loop() NEOBOX_OVERRIDE {
 		if (main_loop_)
 			memdelete(main_loop_);
 		main_loop_ = 0;
 	}
-	void finalize() FRT_OVERRIDE {
+	void finalize() NEOBOX_OVERRIDE {
 		delete_main_loop();
 		cleanup_input();
 		cleanup_physics();
@@ -202,103 +202,103 @@ public: // OS
 		cleanup_video();
 		os_.cleanup();
 	}
-	Point2 get_mouse_pos() const FRT_OVERRIDE {
+	Point2 get_mouse_pos() const NEOBOX_OVERRIDE {
 		return mouse_pos_;
 	}
-	int get_mouse_button_state() const FRT_OVERRIDE {
+	int get_mouse_button_state() const NEOBOX_OVERRIDE {
 		return mouse_state_;
 	}
-	void set_mouse_mode(OS::MouseMode mode) FRT_OVERRIDE {
+	void set_mouse_mode(OS::MouseMode mode) NEOBOX_OVERRIDE {
 		os_.set_mouse_mode(map_mouse_mode(mode));
 	}
-	OS::MouseMode get_mouse_mode() const FRT_OVERRIDE {
+	OS::MouseMode get_mouse_mode() const NEOBOX_OVERRIDE {
 		return map_mouse_os_mode(os_.get_mouse_mode());
 	}
-	void set_window_title(const String &title) FRT_OVERRIDE {
+	void set_window_title(const String &title) NEOBOX_OVERRIDE {
 		os_.set_title(title.utf8().get_data());
 	}
-	void set_video_mode(const VideoMode &video_mode, int screen) FRT_OVERRIDE {
+	void set_video_mode(const VideoMode &video_mode, int screen) NEOBOX_OVERRIDE {
 	}
-	VideoMode get_video_mode(int screen = 0) const FRT_OVERRIDE {
+	VideoMode get_video_mode(int screen = 0) const NEOBOX_OVERRIDE {
 		return video_mode_;
 	}
-	void get_fullscreen_mode_list(List<VideoMode> *list, int screen) const FRT_OVERRIDE {
+	void get_fullscreen_mode_list(List<VideoMode> *list, int screen) const NEOBOX_OVERRIDE {
 	}
-	Size2 get_window_size() const FRT_OVERRIDE {
+	Size2 get_window_size() const NEOBOX_OVERRIDE {
 		return Size2(video_mode_.width, video_mode_.height);
 	}
-	void set_window_size(const Size2 size) FRT_OVERRIDE {
+	void set_window_size(const Size2 size) NEOBOX_OVERRIDE {
 		ivec2 os_size = { (int)size.width, (int)size.height };
 		os_.set_size(os_size);
 		video_mode_.width = os_size.x;
 		video_mode_.height = os_size.y;
 	}
-	Point2 get_window_position() const FRT_OVERRIDE {
+	Point2 get_window_position() const NEOBOX_OVERRIDE {
 		ivec2 pos = os_.get_pos();
 		return Point2(pos.x, pos.y);
 	}
-	void set_window_position(const Point2 &pos) FRT_OVERRIDE {
+	void set_window_position(const Point2 &pos) NEOBOX_OVERRIDE {
 		ivec2 os_pos = { (int)pos.width, (int)pos.height };
 		os_.set_pos(os_pos);
 	}
-	void set_window_fullscreen(bool enable) FRT_OVERRIDE {
+	void set_window_fullscreen(bool enable) NEOBOX_OVERRIDE {
 		os_.set_fullscreen(enable);
 		video_mode_.fullscreen = enable;
 	}
-	bool is_window_fullscreen() const FRT_OVERRIDE {
+	bool is_window_fullscreen() const NEOBOX_OVERRIDE {
 		return os_.is_fullscreen();
 	}
-	void set_window_always_on_top(bool enable) FRT_OVERRIDE {
+	void set_window_always_on_top(bool enable) NEOBOX_OVERRIDE {
 		os_.set_always_on_top(enable);
 		video_mode_.always_on_top = enable;
 	}
-	bool is_window_always_on_top() const FRT_OVERRIDE {
+	bool is_window_always_on_top() const NEOBOX_OVERRIDE {
 		return os_.is_always_on_top();
 	}
-	void set_window_resizable(bool enable) FRT_OVERRIDE {
+	void set_window_resizable(bool enable) NEOBOX_OVERRIDE {
 		os_.set_resizable(enable);
 	}
-	bool is_window_resizable() const FRT_OVERRIDE {
+	bool is_window_resizable() const NEOBOX_OVERRIDE {
 		return os_.is_resizable();
 	}
-	void set_window_maximized(bool enable) FRT_OVERRIDE {
+	void set_window_maximized(bool enable) NEOBOX_OVERRIDE {
 		os_.set_maximized(enable);
 	}
-	bool is_window_maximized() const FRT_OVERRIDE {
+	bool is_window_maximized() const NEOBOX_OVERRIDE {
 		return os_.is_maximized();
 	}
-	void set_window_minimized(bool enable) FRT_OVERRIDE {
+	void set_window_minimized(bool enable) NEOBOX_OVERRIDE {
 		os_.set_minimized(enable);
 	}
-	bool is_window_minimized() const FRT_OVERRIDE {
+	bool is_window_minimized() const NEOBOX_OVERRIDE {
 		return os_.is_minimized();
 	}
-	MainLoop *get_main_loop() const FRT_OVERRIDE {
+	MainLoop *get_main_loop() const NEOBOX_OVERRIDE {
 		return main_loop_;
 	}
-	bool can_draw() const FRT_OVERRIDE {
+	bool can_draw() const NEOBOX_OVERRIDE {
 		return os_.can_draw();
 	}
-	void set_cursor_shape(CursorShape shape) FRT_OVERRIDE {
+	void set_cursor_shape(CursorShape shape) NEOBOX_OVERRIDE {
 	}
-	void set_custom_mouse_cursor(const RES &cursor, CursorShape shape, const Vector2 &hotspot) FRT_OVERRIDE {
+	void set_custom_mouse_cursor(const RES &cursor, CursorShape shape, const Vector2 &hotspot) NEOBOX_OVERRIDE {
 	}
-	void make_rendering_thread() FRT_OVERRIDE {
+	void make_rendering_thread() NEOBOX_OVERRIDE {
 		os_.make_current_gl();
 	}
-	void release_rendering_thread() FRT_OVERRIDE {
+	void release_rendering_thread() NEOBOX_OVERRIDE {
 		os_.release_current_gl();
 	}
-	void swap_buffers() FRT_OVERRIDE {
+	void swap_buffers() NEOBOX_OVERRIDE {
 		os_.swap_buffers_gl();
 	}
-	void set_use_vsync(bool enable) FRT_OVERRIDE {
+	void set_use_vsync(bool enable) NEOBOX_OVERRIDE {
 		os_.set_use_vsync_gl(enable);
 	}
-	bool is_vsync_enabled() const FRT_OVERRIDE {
+	bool is_vsync_enabled() const NEOBOX_OVERRIDE {
 		return os_.is_vsync_enabled_gl();
 	}
-	void set_icon(const Image &icon) FRT_OVERRIDE {
+	void set_icon(const Image &icon) NEOBOX_OVERRIDE {
 		if (icon.empty())
 			return;
 		Image i = icon;
@@ -306,19 +306,19 @@ public: // OS
 		DVector<uint8_t>::Read r = i.get_data().read();
 		os_.set_icon(i.get_width(), i.get_height(), r.ptr());
 	}
-	Size2 get_screen_size(int screen) const FRT_OVERRIDE {
+	Size2 get_screen_size(int screen) const NEOBOX_OVERRIDE {
 		ivec2 size = os_.get_screen_size();
 		return Size2(size.x, size.y);
 	}
-	int get_screen_dpi(int screen) const FRT_OVERRIDE {
+	int get_screen_dpi(int screen) const NEOBOX_OVERRIDE {
 		return os_.get_screen_dpi();
 	}
 public: // EventHandler
-	void handle_resize_event(ivec2 size) FRT_OVERRIDE {
+	void handle_resize_event(ivec2 size) NEOBOX_OVERRIDE {
 		video_mode_.width = size.x;
 		video_mode_.height = size.y;
 	}
-	void handle_key_event(int sdl2_code, int unicode, bool pressed) FRT_OVERRIDE {
+	void handle_key_event(int sdl2_code, int unicode, bool pressed) NEOBOX_OVERRIDE {
 		int code = map_key_sdl2_code(sdl2_code);
 		InputEvent event;
 		event.ID = ++event_id_;
@@ -331,7 +331,7 @@ public: // EventHandler
 		event.key.echo = 0;
 		input_->parse_input_event(event);
 	}
-	void handle_mouse_motion_event(ivec2 pos, ivec2 dpos) FRT_OVERRIDE {
+	void handle_mouse_motion_event(ivec2 pos, ivec2 dpos) NEOBOX_OVERRIDE {
 		mouse_pos_.x = pos.x;
 		mouse_pos_.y = pos.y;
 		InputEvent event;
@@ -351,7 +351,7 @@ public: // EventHandler
 		event.mouse_motion.relative_y = dpos.y;
 		input_->parse_input_event(event);
 	}
-	void handle_mouse_button_event(int os_button, bool pressed, bool doubleclick) FRT_OVERRIDE {
+	void handle_mouse_button_event(int os_button, bool pressed, bool doubleclick) NEOBOX_OVERRIDE {
 		int button = map_mouse_os_button(os_button);
 		int bit = (1 << (button - 1));
 		if (pressed)
@@ -373,21 +373,21 @@ public: // EventHandler
 		event.mouse_button.pressed = pressed;
 		input_->parse_input_event(event);
 	}
-	void handle_js_status_event(int id, bool connected, const char *name, const char *guid) FRT_OVERRIDE {
+	void handle_js_status_event(int id, bool connected, const char *name, const char *guid) NEOBOX_OVERRIDE {
 		input_->joy_connection_changed(id, connected, name, guid);
 	}
-	void handle_js_button_event(int id, int button, bool pressed) FRT_OVERRIDE {
+	void handle_js_button_event(int id, int button, bool pressed) NEOBOX_OVERRIDE {
 		event_id_ = input_->joy_button(event_id_, id, button, pressed ? 1 : 0);
 	}
-	void handle_js_axis_event(int id, int axis, float value) FRT_OVERRIDE {
+	void handle_js_axis_event(int id, int axis, float value) NEOBOX_OVERRIDE {
 		InputDefault::JoyAxis v = { -1, value };
 		event_id_ = input_->joy_axis(event_id_, id, axis, v);
 	}
-	void handle_js_hat_event(int id, int os_mask) FRT_OVERRIDE {
+	void handle_js_hat_event(int id, int os_mask) NEOBOX_OVERRIDE {
 		int mask = map_hat_os_mask(os_mask);
 		event_id_ = input_->joy_hat(event_id_, id, mask);
 	}
-	void handle_js_vibra_event(int id, uint64_t timestamp) FRT_OVERRIDE {
+	void handle_js_vibra_event(int id, uint64_t timestamp) NEOBOX_OVERRIDE {
 		uint64_t input_timestamp = input_->get_joy_vibration_timestamp(id);
 		if (input_timestamp > timestamp) {
 			Vector2 strength = input_->get_joy_vibration_strength(id);
@@ -395,19 +395,19 @@ public: // EventHandler
 			os_.js_vibra(id, strength.x, strength.y, duration, input_timestamp);
 		}
 	}
-	void handle_quit_event() FRT_OVERRIDE {
+	void handle_quit_event() NEOBOX_OVERRIDE {
 		quit_ = true;
 	}
-	void handle_flush_events() FRT_OVERRIDE {
+	void handle_flush_events() NEOBOX_OVERRIDE {
 	}
 };
 
-} // namespace frt
+} // namespace neobox
 
-#include "frt_lib.h"
+#include "neobox_lib.h"
 
-extern "C" int frt_godot_main(int argc, char *argv[]) {
-	frt::Godot2_OS os;
+extern "C" int neobox_godot_main(int argc, char *argv[]) {
+	neobox::Godot2_OS os;
 	Error err = Main::setup(argv[0], argc - 1, &argv[1]);
 	if (err != OK)
 		return 255;

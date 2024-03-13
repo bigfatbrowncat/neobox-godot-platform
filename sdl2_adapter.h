@@ -1,6 +1,6 @@
 // sdl2_adapter.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
@@ -50,19 +50,19 @@
 
 #include <dlfcn.h>
 
-typedef int (*FRT_SDL_JoystickRumble)(SDL_Joystick *, Uint16, Uint16, Uint32);
-FRT_SDL_JoystickRumble frt_SDL_JoystickRumble = 0;
-#define SDL_JoystickRumble frt_SDL_JoystickRumble
+typedef int (*NEOBOX_SDL_JoystickRumble)(SDL_Joystick *, Uint16, Uint16, Uint32);
+NEOBOX_SDL_JoystickRumble neobox_SDL_JoystickRumble = 0;
+#define SDL_JoystickRumble neobox_SDL_JoystickRumble
 
-void frt_resolve_symbols_sdl2() {
+void neobox_resolve_symbols_sdl2() {
 	void *lib = dlopen(0, RTLD_LAZY);
 	if (!lib)
 		return;
-	frt_SDL_JoystickRumble = (FRT_SDL_JoystickRumble)dlsym(lib, "SDL_JoystickRumble");
+	neobox_SDL_JoystickRumble = (NEOBOX_SDL_JoystickRumble)dlsym(lib, "SDL_JoystickRumble");
 	dlclose(lib);
 }
 
-namespace frt {
+namespace neobox {
 
 void *(*get_proc_address)(const char *) = SDL_GL_GetProcAddress;
 
@@ -209,7 +209,7 @@ enum ExitShortcut {
 };
 
 ExitShortcut parse_exit_shortcut() {
-	const char *s = getenv("FRT_EXIT_SHORTCUT");
+	const char *s = getenv("NEOBOX_EXIT_SHORTCUT");
 	if (!s || !strcmp(s, "none"))
 		return ES_None;
 	else if (!strcmp(s, "shift-enter"))
@@ -218,11 +218,11 @@ ExitShortcut parse_exit_shortcut() {
 		return ES_WinQ;
 	else if (!strcmp(s, "esc"))
 		return ES_Esc;
-	warn("invalid FRT_EXIT_SHORTCUT (%s), using: esc", s);
+	warn("invalid NEOBOX_EXIT_SHORTCUT (%s), using: esc", s);
 	return ES_Esc;
 }
 
-class OS_FRT {
+class OS_NEOBOX {
 private:
 	static const int MAX_JOYSTICKS = 16;
 	static const int REQUEST_UNICODE = -1;
@@ -423,17 +423,17 @@ private:
 				handler_->handle_js_vibra_event(id, rumble_timestamp_[id]);
 	}
 public:
-	OS_FRT(EventHandler *handler) : handler_(handler) {
+	OS_NEOBOX(EventHandler *handler) : handler_(handler) {
 		mouse_mode_ = MouseVisible;
 		key_unicode_ = 0;
 		memset(js_, 0, sizeof(js_));
 		rumble_supported_ = 0;
 		exit_shortcut_ = parse_exit_shortcut();
-		frt_resolve_symbols_sdl2();
+		neobox_resolve_symbols_sdl2();
 	}
 #ifdef VULKAN_ENABLED
 	const char *get_vk_surface_extension() {
-		const char *extension = getenv("FRT_VK_SURFACE_EXTENSION");
+		const char *extension = getenv("NEOBOX_VK_SURFACE_EXTENSION");
 		if (extension)
 			return extension;
 		const char *driver = SDL_GetCurrentVideoDriver();
@@ -480,7 +480,7 @@ public:
 			flags |= SDL_WINDOW_BORDERLESS;
 		if (always_on_top)
 			flags |= SDL_WINDOW_ALWAYS_ON_TOP;
-		if (!(window_ = SDL_CreateWindow("frt2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags)))
+		if (!(window_ = SDL_CreateWindow("neobox2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags)))
 			fatal("SDL_CreateWindow failed: %s.", SDL_GetError());
 	}
 	void init_gl(GraphicsAPI api, int width, int height, bool resizable, bool borderless, bool always_on_top) {
@@ -665,4 +665,4 @@ public:
 	}
 };
 
-} // namespace frt
+} // namespace neobox

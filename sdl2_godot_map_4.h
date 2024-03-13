@@ -1,19 +1,19 @@
 // sdl2_godot_map_4.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
 #include "core/version.h"
 
-#define FRT_GODOT_VERSION ((((VERSION_MAJOR * 100) + VERSION_MINOR) * 100) + VERSION_PATCH)
+#define NEOBOX_GODOT_VERSION ((((VERSION_MAJOR * 100) + VERSION_MINOR) * 100) + VERSION_PATCH)
 
 #include "core/os/os.h"
 #include "core/os/keyboard.h"
 #include "servers/display_server.h"
 
-namespace frt {
+namespace neobox {
 
 ::MouseButton map_mouse_os_button(int os_button) {
 	switch (os_button) {
@@ -175,4 +175,4 @@ Key map_key_sdl2_code(int sdl2_code) {
 	return Key::NONE;
 }
 
-} // namespace frt
+} // namespace neobox

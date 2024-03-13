@@ -1,11 +1,11 @@
-// frt_godot4.cc
+// neobox_godot4.cc
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
-#include "frt.h"
+#include "neobox.h"
 #include "sdl2_adapter.h"
 #include "sdl2_godot_map_4.h"
 
@@ -16,8 +16,8 @@
 #endif
 #ifdef GLES3_ENABLED
 #include "drivers/gles3/rasterizer_gles3.h"
-typedef void *(*FRT_FN_gles3_GetProcAddress)(const char *name);
-extern void frt_resolve_symbols_gles3(FRT_FN_gles3_GetProcAddress get_proc_address);
+typedef void *(*NEOBOX_FN_gles3_GetProcAddress)(const char *name);
+extern void neobox_resolve_symbols_gles3(NEOBOX_FN_gles3_GetProcAddress get_proc_address);
 #else
 #include "dl/gles3.gen.h"
 #endif
@@ -29,7 +29,7 @@ extern void frt_resolve_symbols_gles3(FRT_FN_gles3_GetProcAddress get_proc_addre
 #include "drivers/unix/os_unix.h"
 #include "main/main.h"
 
-namespace frt {
+namespace neobox {
 
 static const char *default_audio_device = "default"; // TODO
 
@@ -118,9 +118,9 @@ GraphicsContext::~GraphicsContext() {
 
 class GLContextSDL2 : public GraphicsContext {
 protected:
-	OS_FRT &os_;
+	OS_NEOBOX &os_;
 public:
-	GLContextSDL2(OS_FRT &os) : os_(os) {
+	GLContextSDL2(OS_NEOBOX &os) : os_(os) {
 	}
 public: // GraphicsContext
 	void make_current() override {
@@ -143,11 +143,11 @@ public: // GraphicsContext
 #ifdef VULKAN_ENABLED
 class VulkanContextSDL2 : public GraphicsContext, public VulkanContext {
 private:
-	OS_FRT &os_;
+	OS_NEOBOX &os_;
 	VkSurfaceKHR surface_;
 	RenderingDeviceVulkan *device_ = nullptr;
 public:
-	VulkanContextSDL2(OS_FRT &os) : os_(os) {
+	VulkanContextSDL2(OS_NEOBOX &os) : os_(os) {
 	}
 	~VulkanContextSDL2() {
 		if (device_) {
@@ -188,12 +188,12 @@ public: // VulkanContext
 #ifdef GLES3_ENABLED
 class OpenGL3ContextSDL2 : public GLContextSDL2 {
 public:
-	OpenGL3ContextSDL2(OS_FRT &os) : GLContextSDL2(os) {
+	OpenGL3ContextSDL2(OS_NEOBOX &os) : GLContextSDL2(os) {
 	}
 public: // GraphicsContext
 	void init_context(int width, int height, VSyncMode mode) override {
 		os_.init_context_gl();
-		frt_resolve_symbols_gles3(get_proc_address);
+		neobox_resolve_symbols_gles3(get_proc_address);
 		RasterizerGLES3::make_current();//true);
 	}
 };
@@ -203,7 +203,7 @@ class CustomContextSDL2 : public GLContextSDL2 {
 private:
 	CustomRenderer *renderer_;
 public:
-	CustomContextSDL2(OS_FRT &os) : GLContextSDL2(os) {
+	CustomContextSDL2(OS_NEOBOX &os) : GLContextSDL2(os) {
 		renderer_ = new_CustomRenderer();
 	}
 	~CustomContextSDL2() {
@@ -212,7 +212,7 @@ public:
 public: // GraphicsContext
 	void init_context(int width, int height, VSyncMode mode) override {
 		os_.init_context_gl();
-		frt_resolve_symbols_gles3(get_proc_address);
+		neobox_resolve_symbols_gles3(get_proc_address);
 		renderer_->make_current();
 	}
 };
@@ -224,7 +224,7 @@ bool window_is_focused(WindowID p_window = MAIN_WINDOW_ID) const override {
 }
 
 private:
-	OS_FRT os_;
+	OS_NEOBOX os_;
 	GraphicsContext *context_ = nullptr;
 	Callable rect_changed_callback_;
 	Callable input_event_callback_;
@@ -259,10 +259,10 @@ public: // DisplayServer (implicit)
 		if (rendering_driver == "vulkan")
 			api = API_Vulkan;
 #ifdef GLES3_ENABLED
-#ifdef FRT_CUSTOM_RENDERER
-		else if (getenv("FRT_OPENGL3_UPSTREAM")) // force upstream opengl3
+#ifdef NEOBOX_CUSTOM_RENDERER
+		else if (getenv("NEOBOX_OPENGL3_UPSTREAM")) // force upstream opengl3
 #else
-		else if (!getenv("FRT_OPENGL3_DUMMY")) // for testing on es2 devices
+		else if (!getenv("NEOBOX_OPENGL3_DUMMY")) // for testing on es2 devices
 #endif
 			api = API_OpenGL_ES3;
 #endif
@@ -310,7 +310,7 @@ public: // DisplayServer (implicit)
 		return display_server_;
 	}
 	static void register_display_server() {
-		register_create_function("frt", create_func, get_rendering_drivers_func);
+		register_create_function("neobox", create_func, get_rendering_drivers_func);
 	}
 public: // DisplayServer
 	bool has_feature(Feature feature) const override {
@@ -324,7 +324,7 @@ public: // DisplayServer
 		}
 	}
 	String get_name() const override {
-		return "FRT";
+		return "NEOBOX";
 	}
 	int get_screen_count() const override {
 		return 1;
@@ -676,12 +676,12 @@ public: // OSEventHandler
 	}
 };
 
-} // namespace frt
+} // namespace neobox
 
-#include "frt_lib.h"
+#include "neobox_lib.h"
 
-extern "C" int frt_godot_main(int argc, char *argv[]) {
-	frt::Godot4_OS os;
+extern "C" int neobox_godot_main(int argc, char *argv[]) {
+	neobox::Godot4_OS os;
 	Error err = Main::setup(argv[0], argc - 1, &argv[1]);
 	if (err != OK)
 		return 255;

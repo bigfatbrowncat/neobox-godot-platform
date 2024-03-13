@@ -1,9 +1,9 @@
 scons target=template_release \
-      frt_std=c++17 \
-      frt_pkg_config="/home/user/projects/recalbox/output/host/bin/pkg-config" \
+      neobox_std=c++17 \
+      neobox_pkg_config="/home/user/projects/recalbox/output/host/bin/pkg-config" \
       optimize=speed \
       debug_symbols=no \
-      platform=frt \
+      platform=neobox \
       use_llvm=no \
       vulkan=false \
       opengl3=true \
@@ -19,4 +19,4 @@ scons target=template_release \
       CXX="/home/user/projects/recalbox/output/host/bin/aarch64-buildroot-linux-gnu-g++" \
       LD="/home/user/projects/recalbox/output/host/bin/aarch64-buildroot-linux-gnu-g++" $1
 
-#      frt_custom_renderer=true \
+#      neobox_custom_renderer=true \

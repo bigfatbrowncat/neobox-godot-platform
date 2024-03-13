@@ -1,6 +1,6 @@
 // gles2_egl.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */

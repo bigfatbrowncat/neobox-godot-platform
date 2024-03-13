@@ -1,17 +1,17 @@
-// frt.h
+// neobox.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
 #if __cplusplus >= 201103L
-#define FRT_OVERRIDE override
+#define NEOBOX_OVERRIDE override
 #else
-#define FRT_OVERRIDE
+#define NEOBOX_OVERRIDE
 #endif
 
-namespace frt {
+namespace neobox {
 
 void warn(const char *format, ...)
 #ifdef __GNUC__
@@ -28,4 +28,4 @@ __attribute__((format(printf, 1, 2)))
 #endif
 ;
 
-} // namespace frt
+} // namespace neobox

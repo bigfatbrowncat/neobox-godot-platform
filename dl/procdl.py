@@ -2,7 +2,7 @@
 
 # procdl.py
 #
-# FRT - A Godot platform targeting single board computers
+# NEOBOX - A Godot platform targeting single board computers
 # Copyright (c) 2017-2023  Emanuele Fornara
 # SPDX-License-Identifier: MIT
 #
@@ -35,7 +35,7 @@ def parse_dl(dl, suffix):
 		s = m.group(1)
 		symbols.append(s)
 		ls = libname + '_' + s
-		types.append(line.replace('___' + s + '___', 'FRT_FN_' + ls))
+		types.append(line.replace('___' + s + '___', 'NEOBOX_FN_' + ls))
 	f_dl.close()
 	return (libname, head, symbols, types, includes)
 
@@ -47,7 +47,7 @@ def build_h(dl, h):
 		if s:
 			f.write(s)
 		f.write('\n')
-	out('#ifndef FRT_DL_SKIP')
+	out('#ifndef NEOBOX_DL_SKIP')
 	for s in includes:
 		out(s)
 	out()
@@ -56,15 +56,15 @@ def build_h(dl, h):
 	out()
 	for s in symbols:
 		ls = libname + '_' + s
-		out('#define ' + s + ' frt_fn_' + ls)
+		out('#define ' + s + ' neobox_fn_' + ls)
 	out()
 	for s in symbols:
 		ls = libname + '_' + s
-		out('extern FRT_FN_' + ls + ' frt_fn_' + ls + ';')
+		out('extern NEOBOX_FN_' + ls + ' neobox_fn_' + ls + ';')
 	out()
 	out('#endif')
-	out('typedef void *(*FRT_FN_' + libname + '_GetProcAddress)(const char *name);')
-	out('extern void frt_resolve_symbols_' + libname + '(FRT_FN_' + libname + '_GetProcAddress get_proc_address);')
+	out('typedef void *(*NEOBOX_FN_' + libname + '_GetProcAddress)(const char *name);')
+	out('extern void neobox_resolve_symbols_' + libname + '(NEOBOX_FN_' + libname + '_GetProcAddress get_proc_address);')
 	f.close()
 
 def build_cc(dl, cc):
@@ -74,11 +74,11 @@ def build_cc(dl, cc):
 	assignments = ''
 	for s in symbols:
 		ls = libname + '_' + s
-		assignments += 'FRT_FN_' + ls + ' frt_fn_' + ls + ' = 0;\n'
+		assignments += 'NEOBOX_FN_' + ls + ' neobox_fn_' + ls + ' = 0;\n'
 	resolutions = ''
 	for s in symbols:
 		ls = libname + '_' + s
-		resolutions += '\tfrt_fn_' + ls + ' = (FRT_FN_' + ls + ')'
+		resolutions += '\tneobox_fn_' + ls + ' = (NEOBOX_FN_' + ls + ')'
 		resolutions += 'get_proc_address("' + s + '");\n'
 	f.write("""\
 #include "%(libname)s.gen.h"
@@ -87,7 +87,7 @@ def build_cc(dl, cc):
 
 %(assignments)s
 
-void frt_resolve_symbols_%(libname)s(FRT_FN_%(libname)s_GetProcAddress get_proc_address) {
+void neobox_resolve_symbols_%(libname)s(NEOBOX_FN_%(libname)s_GetProcAddress get_proc_address) {
 %(resolutions)s
 }
 """ % {

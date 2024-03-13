@@ -1,11 +1,11 @@
 // dummy_renderer.cc
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
-#include "platform/frt/custom_renderer.h"
+#include "platform/neobox/custom_renderer.h"
 
 #include <stdio.h>
 
@@ -13,12 +13,12 @@
 
 namespace example {
 
-class Renderer : public frt::CustomRenderer {
+class Renderer : public neobox::CustomRenderer {
 public:
 	Renderer() {
 		fprintf(stderr, "warning: overriding opengl3 with dummy.\n");
 	}
-public: // frt::CustomRenderer
+public: // neobox::CustomRenderer
 	void make_current() override {
 		::RasterizerDummy::make_current();
 	}
@@ -26,10 +26,10 @@ public: // frt::CustomRenderer
 
 } // namespace example
 
-namespace frt {
+namespace neobox {
 
 CustomRenderer *new_CustomRenderer() {
 	return new example::Renderer();
 }
 
-} // namespace frt
+} // namespace neobox

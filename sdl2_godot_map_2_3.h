@@ -1,20 +1,20 @@
 // sdl2_godot_map_2_3.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
 #include "core/version.h"
 
-#define FRT_GODOT_VERSION ((((VERSION_MAJOR * 100) + VERSION_MINOR) * 100) + VERSION_PATCH)
+#define NEOBOX_GODOT_VERSION ((((VERSION_MAJOR * 100) + VERSION_MINOR) * 100) + VERSION_PATCH)
 
 #include "core/os/os.h"
 #include "core/os/input.h"
 #include "core/os/keyboard.h"
 #include "main/input_default.h"
 
-namespace frt {
+namespace neobox {
 
 int map_mouse_os_button(int os_button) {
 	switch (os_button) {
@@ -53,7 +53,7 @@ MouseMode map_mouse_mode(OS::MouseMode mode) {
 	case OS::MOUSE_MODE_HIDDEN:
 		return MouseHidden;
 	case OS::MOUSE_MODE_CAPTURED:
-#if FRT_GODOT_VERSION >= 30000
+#if NEOBOX_GODOT_VERSION >= 30000
 	case OS::MOUSE_MODE_CONFINED:
 #endif
 		return MouseCaptured;
@@ -140,7 +140,7 @@ struct KeyMap {
 	{ SDLK_END, KEY_END },
 	{ SDLK_PAGEUP, KEY_PAGEUP },
 	{ SDLK_PAGEDOWN, KEY_PAGEDOWN },
-#if FRT_GODOT_VERSION >= 30000
+#if NEOBOX_GODOT_VERSION >= 30000
 	{ SDLK_RETURN, KEY_ENTER },
 #else
 	{ SDLK_RETURN, KEY_RETURN },
@@ -181,4 +181,4 @@ int map_key_sdl2_code(int sdl2_code) {
 	return 0;
 }
 
-} // namespace frt
+} // namespace neobox

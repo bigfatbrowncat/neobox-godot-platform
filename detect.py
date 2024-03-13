@@ -1,6 +1,6 @@
 # detect.py
 #
-# FRT - A Godot platform targeting single board computers
+# NEOBOX - A Godot platform targeting single board computers
 # Copyright (c) 2017-2023  Emanuele Fornara
 # SPDX-License-Identifier: MIT
 #
@@ -19,7 +19,7 @@ else:
 	version_handled = False
 
 def get_name():
-	return "FRT"
+	return "NEOBOX"
 
 def is_active():
 	return True
@@ -29,6 +29,6 @@ def can_build():
 	if os.name != "posix":
 		return False
 	if not version_handled:
-		print("Error: Godot version not handled by FRT. Aborting.")
+		print("Error: Godot version not handled by NEOBOX. Aborting.")
 		return False
 	return True

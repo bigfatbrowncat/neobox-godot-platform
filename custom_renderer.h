@@ -1,14 +1,14 @@
 // custom_renderer.h
 /*
-  FRT - A Godot platform targeting single board computers
+  NEOBOX - A Godot platform targeting single board computers
   Copyright (c) 2017-2023  Emanuele Fornara
   SPDX-License-Identifier: MIT
  */
 
-#ifndef FRT_CUSTOM_RENDERER_H
-#define FRT_CUSTOM_RENDERER_H
+#ifndef NEOBOX_CUSTOM_RENDERER_H
+#define NEOBOX_CUSTOM_RENDERER_H
 
-namespace frt {
+namespace neobox {
 
 struct CustomRenderer {
 	virtual ~CustomRenderer();
@@ -17,6 +17,6 @@ struct CustomRenderer {
 
 CustomRenderer *new_CustomRenderer();
 
-} // namespace frt
+} // namespace neobox
 
-#endif // FRT_CUSTOM_RENDERER_H
+#endif // NEOBOX_CUSTOM_RENDERER_H
