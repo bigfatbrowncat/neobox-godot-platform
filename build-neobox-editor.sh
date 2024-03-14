@@ -10,14 +10,6 @@ scons target=editor \
       tools=no \
       use_static_cpp=yes \
       -j5 \
-      $1
-
-#      neobox_std=c++17 \
-#      neobox_custom_renderer=true \
-#      arch=x86_64 \
-#      neobox_pkg_config="/home/user/projects/recalbox/output/host/bin/pkg-config" \
-#      CCFLAGS="-I/home/user/projects/recalbox/output/host/aarch64-buildroot-linux-gnu/sysroot/usr/include" \
-#      CXXFLAGS="-flax-vector-conversions" \
-#      CC="/home/user/projects/recalbox/output/host/bin/aarch64-buildroot-linux-gnu-gcc" \
-#      CXX="/home/user/projects/recalbox/output/host/bin/aarch64-buildroot-linux-gnu-g++" \
-#      LD="/home/user/projects/recalbox/output/host/bin/aarch64-buildroot-linux-gnu-g++" \
+      CC="${CC}" \
+      CXX="${CXX}" \
+      LD="${CXX}" $1

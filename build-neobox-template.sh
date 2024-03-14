@@ -17,9 +17,9 @@ scons target=template_release \
       arch=arm64 \
       -j5 \
       CXXFLAGS="${CXXFLAGS} -flax-vector-conversions" \
-      CC="${TARGET_CC}" \
-      CXX="${TARGET_CXX}" \
-      LD="${TARGET_CXX}" $1
+      CC="${CC}" \
+      CXX="${CXX}" \
+      LD="${CXX}" $1
 
 #      neobox_custom_renderer=true \
 #      CCFLAGS="-I/home/user/projects/recalbox/output/host/aarch64-buildroot-linux-gnu/sysroot/usr/include" \
